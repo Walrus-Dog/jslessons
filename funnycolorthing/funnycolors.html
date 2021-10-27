@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<HTML lang="en">
+    <HEAD>
+        <Title>"Bullet Hell"</TITLE>
+        <Script>
+        function createImage(src, title) { //for making image objects
+            var img   = new Image();
+            img.src   = src;
+            img.alt   = title;
+            img.title = title;
+            img.width = "64";
+            img.height = "64";
+            
+            //console.log(img);
+            return img; 
+        }
+        </SCRIPT>
+    </HEAD>
+    
+    <BODY>
+        <HEADER>
+        
+        </HEADER>
+        
+        <CANVAS id="myCanvas" width="650" height="650">
+            Your browser does not support canvas.
+        </CANVAS>
+        
+        <SCRIPT>
+        class main{
+            
+            UpdateAll(){
+                
+            }
+            
+            RenderAll(){
+                const d = new Date();
+                let time = d.getTime();
+                if(time % 6 == 0){
+                    ctx.fillStyle = "#" + Math.floor(Math.random()*16777215).toString(16);
+                    ctx.fillRect(0, 0, canvas.width * Math.random(), canvas.height * Math.random());
+                }
+            }
+                
+            static MainLoop()
+            {
+                m.UpdateAll();
+                m.RenderAll();
+                requestAnimationFrame(main.MainLoop);
+            }
+        }
+        </SCRIPT>
+        
+        <SCRIPT>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            
+            window.addEventListener('keydown', onKeyDown, false);
+            
+            ctx.fillStyle = "blue";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            var m = new main();
+            
+            requestAnimationFrame(main.MainLoop);
+            
+            function onKeyDown(event){
+                let keyCode = event.keyCode;
+                switch(keyCode){
+                    case 68: //d
+                        console.log("d down");
+                    break;
+                    case 83: //s
+                        console.log("s down");
+                    break;
+                    case 65: //a
+                        console.log("a down");
+                    break;
+                    case 87: //w
+                        console.log("w down");
+                    break;
+                }
+            }
+        </SCRIPT>
+        
+    </BODY>
+    
+</HTML>

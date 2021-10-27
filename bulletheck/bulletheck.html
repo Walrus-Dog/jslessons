@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<HTML lang="en">
+	<HEAD>
+		<Title>"Bullet Hell"</TITLE>
+		<Script>
+		function createImage(src, title) { //for making image objects
+			var img   = new Image();
+			img.src   = src;
+			img.alt   = title;
+			img.title = title;
+			img.width = "64";
+			img.height = "64";
+			
+			//console.log(img);
+			return img; 
+		}
+		
+		</SCRIPT>
+	</HEAD>
+	
+	<BODY>
+		<HEADER>
+		
+		</HEADER>
+		
+		<CANVAS id="myCanvas" width="650" height="650">
+			Your browser does not support canvas.
+		</CANVAS>
+		
+		<SCRIPT>
+		class main{
+			
+			constructor(){
+				
+				//Make the Player
+				this.player = new Player();
+			}
+			
+			// Updates all game objects (for movement, change of state, etc)
+			UpdateAll(){
+				this.player.Update();
+			}
+			
+			// Calls all game objects' Render() function, Drawing them to the screen.
+			RenderAll(){
+				const d = new Date();
+				let time = d.getTime();
+				//Clear screen/frame.
+				ctx.fillStyle = "Grey";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				//
+				
+				this.player.Render(time);
+			}
+			
+			// TBI, This will check collisions to test if th3e player is allowed to move
+			//      or if they will be hit by a bullet/hit a bullet.
+			CheckCollision(){
+				
+			}
+			
+			// Core gameloop, this is the engine of the applciation that refereshes every 
+			// frame.
+			static MainLoop()
+			{
+				m.CheckCollision(); //To be implimented.
+				m.UpdateAll();
+				m.RenderAll();
+				requestAnimationFrame(main.MainLoop);
+			}
+		}
+		</SCRIPT>
+		
+		<SCRIPT>
+		// Player class that will be used by main. Should extend GameObject later.
+		class Player{
+			
+			constructor(){
+				this.sprite = createImage("./image0.jpg");
+				this.position = [200,200]; //X Y positions of Player
+				this.scale = [1,1];
+				this.dir = [0,0];
+				
+				this.collider = new Collider(50);
+			}
+			
+			Update(){
+				var speed = 10.0;
+				
+				//Initialize direction vector to zero for player per-update
+				var direction = [0,0];
+				
+				//Test keys, adding to the direction vector
+				if(keyPresses.w){
+					direction[1] -= 1;
+				}
+				
+				if(keyPresses.s){
+					direction[1] += 1;
+				}
+				
+				if(keyPresses.a){
+					direction[0] -= 1;
+				}
+				
+				if(keyPresses.d){
+					direction[0] += 1;
+				}
+				
+				// Normalize direction vector for equal speed in all directions.
+				//
+				// Based on simple n = v/|v| (applies in any dimension)
+				// Where:
+				// n is the normalized vector 
+				// v is the original input vector
+				// |v| is the unit vector => sqrt(x^2 + y^2)
+				//
+				// Only normalize if dir[0] and dir[1] are non-zero. Otherwise will result in NaN (Not-a-Number).
+				if(direction[0] && direction[1]){
+					var unitVector = Math.pow((direction[0] * direction[0]) + (direction[1] * direction[1]), 0.5);
+					direction = [direction[0] / unitVector, direction[1] / unitVector];
+					console.log(direction);
+				}
+				
+				//Set class direction variable incase other objects need it
+				this.dir = direction;
+				this.position[0] += this.dir[0] * speed;
+				this.position[1] += this.dir[1] * speed;
+			}
+			
+			Render(time){
+				// Uncomment for cool woowoo effect
+				//this.scale[0] = Math.cos(time / 200)*0.25 + 1.0;
+				//this.scale[1] = Math.sin(time / 200)*0.25 + 1.0;
+				
+				// Correct images being drawn from the top left to being drawn from the center
+				// -This is done by scaling (multiplying) the image by the Objects 
+				//   scale (default [1,1]), and then offsetting it half the width and height over.
+				//
+				var pixelScale = [this.scale[0] * this.sprite.width, this.scale[1] * this.sprite.height];
+				var offsetPosition = [this.position[0] - pixelScale[0]/2.0, this.position[1] - pixelScale[1]/2.0];
+				
+				// Draw to screen
+				ctx.drawImage(this.sprite, offsetPosition[0], offsetPosition[1], pixelScale[0], pixelScale[1]);
+				this.collider.Render(this.position);
+			}
+		}
+		</SCRIPT>
+		
+		<SCRIPT>
+		// Simple collider class, this is for viewing the colliders of game objects.
+		class Collider{
+			
+			// Creates Collider object 
+			// example: var col = new Collider(20); //creates collider with 20 pixel radius
+			constructor(radius){
+				this.radius = radius;
+			}
+			
+			// Render 'colldier' as simple circle
+			// https://www.w3schools.com/tags/canvas_arc.asp
+			Render(position){
+				ctx.strokeStyle = "lime";
+				ctx.beginPath();
+				ctx.arc(position[0], position[1], this.radius, 0, 2 * Math.PI);
+				ctx.stroke();
+			}
+		}
+		
+		/* // Polymorphism for later!
+		class GameObject{
+			
+			constructor(src, position, scale, rotation, direction, name){
+				this.sprite = src;
+				this.position = position;
+				this.scale = scale;
+				this.rotation = rotation;
+				this.dir = direction;
+				this.name = name;
+				
+				this.collider = new Colider(0.5);
+			}
+			
+			Update(){
+				
+			}
+			
+			Render(){
+				ctx.drawImage(this.sprite, this.position[0], this.position[1], 50 * this.scale[0], 50 * this.scale[1]);
+			}
+		}
+		*/
+		</SCRIPT>
+		
+		<SCRIPT>
+			//Important global canvas variables!
+			var canvas = document.getElementById("myCanvas");
+			var ctx = canvas.getContext("2d");
+			
+			//Clear Screen once (not seen)
+			ctx.fillStyle = "blue";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			
+			// Instance our 'main' class. This acts as our core game environment.
+			var m = new main();
+			
+			// Start the game loop.
+			requestAnimationFrame(main.MainLoop);
+			
+			// Store active keypresses in global array
+			let keyPresses = {};
+			window.onkeydown = keyDownListener;
+			window.onkeyup = keyUpListener;
+			
+			function keyDownListener(event) {
+		        keyPresses[event.key] = true;
+			}
+
+			function keyUpListener(event) {
+			    keyPresses[event.key] = false;
+			}
+			
+		</SCRIPT>
+		
+	</BODY>
+	
+</HTML>
+		
+BulletHell.html
+6 KB
