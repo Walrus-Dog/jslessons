@@ -69,7 +69,7 @@ var jobs = [
 
 var levels = Math.floor(Math.random() * (80 - 15 + 1) + 15);
 
-var dungeons = [
+var dungeonLevelList = [
     "Sastasha",
     "The Tam-Tara Deepcroft",
     "Copperbell Mines",
@@ -136,15 +136,18 @@ console.log(dungeons.length)
 
 raceIdx = Math.floor(Math.random() * races.length);
 jobIdx = Math.floor(Math.random() * jobs.length);
-dungeonIdx = Math.floor(Math.random() * dungeons.length);
+dungeonIndex = Math.floor(Math.random() * dungeonLevelList.length);
+var dungeonLevelItem = dungeonLevelList[dungeonIndex];
 
 var race, job, level, dungeon;
 
 race = races[raceIdx]
 job = jobs[jobIdx]
-dungeon = dungeons[dungeonIdx]
 
 var message = `You are playing a ${race} ${job} at level ${level}, in ${dungeon}`
 
 console.log(message)
 
+if (level < dungeonLevelItem[1]) {
+    
+}
