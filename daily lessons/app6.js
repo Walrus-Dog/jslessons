@@ -23,6 +23,14 @@
             do stuff
         }
     }
+
+    How do i loop an object?
+
+    for/in loop
+
+    for (var in object) {
+        do stuff
+    }
 */
 
 let person = {
@@ -41,11 +49,7 @@ let person = {
         youngest: "saab"
     },
     isCool: true,
-    isLame: null,
-
-    greeting: function() {
-        console.log(`Hello ${this.fName.mName}`);
-    }
+    isLame: null
 };
 
 console.log(person)
@@ -60,8 +64,6 @@ console.log(person.age);
 person.vehicle = "skyline";
 
 console.log(person)
-
-person.greeting();
 
 //Object.freeze(person); // freezes and object, cannot mutate date not add properties
 
@@ -127,7 +129,36 @@ class Album {
         this.runtime,
         this.tracklist,
         this.singles,
-        this.compser,
-        this.label
+        this.producer,
+        this.label,
+        this.vocalist,
+        this.release,
+        this.studio,
+        this.albumart
     }
-}
+
+    showPeople () {
+        console.log(`The album ${this.title} was released ${this.release}, was produced ${this.producer}, had lead vocals by ${this.vocalist}, recorded at ${this.studio}, recorded on the label ${this.label}, and featured album art by ${this.albumart}`)
+    }
+
+    showStats () {
+        console.log(`The album ${this.title}, had a runtime of ${this.runtime}, had a track list of ${this.tracklist} songs, was released on ${this.release}, and had ${this.singles} as its single tracks.`)
+    }
+};
+
+let DemonDays = new Album;
+
+DemonDays.title = "Demon Days";
+DemonDays.runtime = "51:33";
+DemonDays.tracklist = "15";
+DemonDays.singles = "Feel Good Inc", "Dare", "Dirty Harry", "Kids with Guns", "El Manana";
+DemonDays.producer = "Danger Mouse";
+DemonDays.label = "Parlophone";
+DemonDays.vocalist = "Damon Albarn";
+DemonDays.release = "11 May 2005";
+DemonDays.studio = "Studio 13, London";
+DemonDays.albumart = "Jamie Hewlett";
+
+for (let key in DemonDays) {
+    console.log(`${key}: ${DemonDays[key]}`)
+};
