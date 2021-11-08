@@ -64,3 +64,30 @@ for (let i = 0; i < 19; i++) {
     console.log(num);
 }
 
+// arrow functions
+
+/* function functName() {
+    do stuff
+}
+
+const functName =()=> {
+    do stuff
+}
+
+let variable = data
+const = {
+
+}
+
+*/
+
+const addNums =(a, b)=> console.log(a + b);
+
+const purchasedItems =(item)=> console.log(`I got the ${item} in the cart`);
+
+const sortList =(arr)=> {
+    arr.forEach(item => {
+        console.log(item);
+    });
+};
+

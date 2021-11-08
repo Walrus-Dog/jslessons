@@ -1,0 +1,19 @@
+body {
+    background: #EBD494;
+}
+
+.main {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.movie-card {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #D7EBBA;
+    border: 2px solid #9AD2CB;
+    border-radius: 5px;
+}

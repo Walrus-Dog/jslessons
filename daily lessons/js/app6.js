@@ -33,37 +33,37 @@
     }
 */
 
-let person = {
-    id: 1,
-    myName: {
-        "nickname": "waldog", 
-        fName: "Pat",
-        mName: "Tierce"
-    },
-    age: 25,
-    occupation: "sleepy",
-    hobbies: ["modles", "games", "languages", "writing", "drawing", "cars"],
-    cars: "WRX", 
-    "older cars": {
-        oldest: "element",
-        youngest: "saab"
-    },
-    isCool: true,
-    isLame: null
-};
+// let person = {
+//     id: 1,
+//     myName: {
+//         "nickname": "waldog", 
+//         fName: "Pat",
+//         mName: "Tierce"
+//     },
+//     age: 25,
+//     occupation: "sleepy",
+//     hobbies: ["modles", "games", "languages", "writing", "drawing", "cars"],
+//     cars: "WRX", 
+//     "older cars": {
+//         oldest: "element",
+//         youngest: "saab"
+//     },
+//     isCool: true,
+//     isLame: null
+// };
 
-console.log(person)
-console.log(person.hobbies[3])
-console.log(person.myName.fName)
-console.log(person["older cars"].oldest)
+// console.log(person)
+// console.log(person.hobbies[3])
+// console.log(person.myName.fName)
+// console.log(person["older cars"].oldest)
 
-person.age = 26;
+// person.age = 26;
 
-console.log(person.age);
+// console.log(person.age);
 
-person.vehicle = "skyline";
+// person.vehicle = "skyline";
 
-console.log(person)
+// console.log(person)
 
 //Object.freeze(person); // freezes and object, cannot mutate date not add properties
 
@@ -71,19 +71,19 @@ console.log(person)
 
 //delete person.vehicle
 
-class Animal {
-    constructor() {
-        this.name,
-        this.color,
-        this.legs,
-        this.eyes,
-        this.sound
-    }
+// class Animal {
+//     constructor() {
+//         this.name,
+//         this.color,
+//         this.legs,
+//         this.eyes,
+//         this.sound
+//     }
 
-    makeSound() {
-        console.log(this.sound)
-    }
-}
+//     makeSound() {
+//         console.log(this.sound)
+//     }
+// }
 
 // using class build a movie object and album object. have at least 10 properties and 3 methods
 
@@ -162,3 +162,18 @@ DemonDays.albumart = "Jamie Hewlett";
 for (let key in DemonDays) {
     console.log(`${key}: ${DemonDays[key]}`)
 };
+
+/*
+    build an array of objects
+
+    build objects
+
+    collect data from user
+
+    display the cards
+
+    click on card and album details will be on back
+
+    click button for video from album will play
+*/ 
+ // get 6 movies. title genre cast director year. pit them in a nested object

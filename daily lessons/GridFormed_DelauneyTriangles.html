@@ -1,0 +1,561 @@
+<!DOCTYPE HTML>
+<HTML lang="en">
+	<HEAD>
+		<Title>"Delaunay Triangles"</TITLE>
+		<Script>
+		function createImage(src, title) { //for making image objects
+			var img   = new Image();
+			img.src   = src;
+			img.alt   = title;
+			img.title = title;
+			img.width = "64";
+			img.height = "64";
+			
+			//console.log(img);
+			return img; 
+		}
+		
+		function Distance(p1, p2){
+			return Math.pow((p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]), 0.5);
+		}
+		
+		function MidPoint(p1, p2){
+			return [(p2[0] + p1[0])/2, (p2[1] + p1[1])/2];
+		}
+		
+		//(p[0] == edges[0] && p[1] == edges[1])
+		function ContainsEdge(edges, e){
+			var hasEdge = false;
+			var hasP1 = false;
+			var hasP2 = false;
+			
+			const p1 = [e[0][0], e[0][1]];
+			const p2 = [e[1][0], e[1][1]];
+			
+			for(var i = 0; i < edges.length; i++){
+				var edgeLength = edges[i];
+				for(var j = 0; j < edgeLength.length; j++){
+					hasP1 = (edges[i][j][0] == p1[0] && edges[i][j][1] == p1[1]) || (edges[i][j][0] == p1[1] && edges[i][j][1] == p1[0]) || hasP1;
+					hasP2 = (edges[i][j][0] == p2[0] && edges[i][j][1] == p2[1]) || (edges[i][j][0] == p2[1] && edges[i][j][1] == p2[0]) || hasP2;
+				}
+			}
+			
+			return hasP1 && hasP2;
+		}
+		
+		</SCRIPT>
+	</HEAD>
+	
+	<BODY>
+		<HEADER>
+		
+		</HEADER>
+		
+		<SCRIPT>
+		class main{
+			
+			constructor(){
+				
+				this.chunksize = canvas.width/3.0;
+				
+				this.points = [];
+				this.quads = [];
+				//Generates 9 points, one in each grid cell.
+				for(var x = 0; x < 3; x++){
+					for(var y = 0; y < 3; y++){
+						var dotX = Math.random() * (this.chunksize) + (this.chunksize * x);
+						var dotY = Math.random() * (this.chunksize) + (this.chunksize * y);
+						this.points[(3*x) + y] = new Point(dotX, dotY, ((3*x) + y).toString(), "#F42E2E");
+					}
+				}
+				
+				this.GenerateQuads();
+			}
+			
+			//Algorithm Implimentation
+			GenerateQuads(){
+				
+				this.quads.push(new Quad(this.points[4], this.points[1], this.points[0], this.points[3]));
+				this.quads.push(new Quad(this.points[4], this.points[3], this.points[6], this.points[7]));
+				this.quads.push(new Quad(this.points[4], this.points[7], this.points[8], this.points[5]));//this.tris = tris;
+				this.quads.push(new Quad(this.points[4], this.points[5], this.points[2], this.points[1]));
+			}
+			
+			RenderGrid(){
+			   let s = canvas.width/3.0;
+			   let pL = 0;
+			   let pT = 0;
+			   let pR = 0;
+			   let pB = 0;
+			   
+			   var width = canvas.width;
+			   var height = canvas.height;
+			   
+			   ctx.strokeStyle = 'lightgrey';
+			   ctx.beginPath();
+			   for (var x = pL; x <= width - pR; x += s) {
+				  ctx.moveTo(x, pT);
+				  ctx.lineTo(x, height - pB);
+			   }
+			   for (var y = pT; y <= height - pB; y += s) {
+				  ctx.moveTo(pL, y);
+				  ctx.lineTo(width - pR, y);
+			   }
+			   ctx.stroke();
+			}
+			
+			// Updates all game objects (for movement, change of state, etc)
+			UpdateAll(){
+				
+				if(mouseDown){
+					for(var p = 0; p < this.points.length; p++){
+						if(Distance(this.points[p].ar, [mouseX, mouseY]) < 20 || grabbed[p]){
+							var s = this.points[p].size;
+							this.points[p].Set(mouseX - s/2.0, mouseY - s/2.0);
+							grabbed[p] = true;
+						}
+					}
+				} else {
+					grabbed = [];
+				}
+				
+				for(var q = 0; q < this.quads.length; q++){
+					this.quads[q].Update();
+				}
+				
+				ui.Update();
+			}
+			
+			// Calls all game objects' Render() function, Drawing them to the screen.
+			RenderAll(){
+				ctx.fillStyle = "#333";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				
+				this.RenderGrid();
+				
+				for(var q = 0; q < this.quads.length; q++){
+					this.quads[q].Render();
+				}
+				
+				if(ui.V){
+					this.RenderVoronoi();
+				}
+				
+				for(var p = 0; p < 9; p++){
+					this.points[p].Render();
+				}
+				
+				
+				ui.Render();
+			}
+			
+			RenderVoronoi(){
+				var tris = [];
+				for(var q = 0; q < this.quads.length; q++){
+					if(this.quads[q].tri1.HasPoint(this.points[4].ar)){
+						tris.push(this.quads[q].tri1);
+					}
+					if(this.quads[q].tri2.HasPoint(this.points[4].ar)){
+						tris.push(this.quads[q].tri2);
+					}
+				}
+				
+				ctx.beginPath();
+				ctx.strokeStyle = "pink";
+				ctx.fillStyle = "rgb(204, 153, 255, 0.25)";
+				for(var t = 0; t < tris.length; t++){
+					ctx.lineTo(tris[t].centroid[0], tris[t].centroid[1]);
+				}
+				ctx.closePath();
+				ctx.lineWidth = 3;
+				ctx.fill();
+				ctx.stroke();
+			}
+			
+			static MainLoop()
+			{
+				m.UpdateAll();
+				m.RenderAll();
+				requestAnimationFrame(main.MainLoop);
+			}
+		}
+		</SCRIPT>
+		
+		<SCRIPT>
+		
+		class Point{
+			
+			constructor(x, y, label, color, size){
+				this.x = x;
+				this.y = y;
+				this.label = label;
+				this.color = color;
+				this.size = size;
+				this.ar = [x,y];
+			}
+			
+			Set(x, y){
+				this.x = x;
+				this.y = y;
+				this.ar = [x,y];
+			}
+			
+			Render(){
+				if (this.color == null) {
+					this.color = '#000';
+				}
+				if (this.size == null) {
+					this.size = 20;
+				}
+			  
+				var radius = 0.5 * this.size;
+
+				// to increase smoothing for numbers with decimal part
+				var pointX = Math.round(this.x);
+				var pointY = Math.round(this.y);
+		  
+				ctx.beginPath();
+				ctx.fillStyle = this.color;
+				ctx.arc(pointX, pointY, radius, 0, 2 * Math.PI);
+				ctx.fill();
+			  
+				if (this.label) {
+					var textX = Math.round(this.x);
+					var textY = Math.round(pointY - 15);
+				  
+					ctx.font = 'Italic 14px Arial';
+					ctx.fillStyle = 'White';
+					ctx.textAlign = 'center';
+					ctx.fillText(this.label, textX, textY);
+				}
+			}
+		}
+		
+		class Quad{
+			
+			constructor(p1, p2, p3, p4){
+				this.p1 = p1;
+				this.p2 = p2;
+				this.p3 = p3;
+				this.p4 = p4;
+				
+				this.tri1 = new Triangle(p1, p2, p4);
+				this.tri2 = new Triangle(p2, p3, p4);
+			}
+			
+			// p1 = center grid square
+			// p2 = CCW grid cell
+			// p3 = respective corner point
+			// p4 = CW grid cell
+			Update(){
+				var min = 0;
+				min = Distance(this.p1.ar, this.p3.ar);
+				
+				if(min < Distance(this.p2.ar, this.p4.ar)){
+					this.tri1.Update(this.p1, this.p3, this.p2);
+					this.tri2.Update(this.p1, this.p3, this.p4);
+				} else {
+					this.tri1.Update(this.p1, this.p2, this.p4);
+					this.tri2.Update(this.p2, this.p3, this.p4);
+				}
+			}
+			
+			Render(){
+				this.tri1.Render();
+				this.tri2.Render();
+				
+				//Draw Main Quad
+				ctx.beginPath();
+				ctx.strokeStyle = "#4E7BB9";
+				ctx.fillStyle = this.color;
+				ctx.moveTo(this.p1.x, this.p1.y);
+				ctx.lineTo(this.p2.x, this.p2.y);
+				ctx.lineTo(this.p3.x, this.p3.y);
+				ctx.lineTo(this.p4.x, this.p4.y);
+				ctx.closePath();
+				ctx.lineWidth = 3;
+				ctx.stroke();
+			}
+			
+		}
+		
+		class Triangle{
+			
+			constructor(p1, p2, p3){
+				this.p1 = p1;
+				this.p2 = p2;
+				this.p3 = p3;
+				this.c = this.GetCircumcenter();
+				this.centroid = this.GetCentroid();
+				this.cr = Distance(this.c, this.p1);
+				
+				this.edges = [[p1, p2],[p1, p3],[p2, p3]];
+				var r = Math.random()*255;
+				var g = Math.random()*200;
+				var b = Math.random()*200;
+				this.color = "rgba(" + r + "," + g + "," + b + ",0.1)";
+				 
+			}
+			
+			Update(p1, p2, p3){
+				this.p1 = p1;
+				this.p2 = p2;
+				this.p3 = p3;
+				this.c = this.GetCircumcenter();
+				this.centroid = this.GetCentroid();
+				this.cr = Distance(this.c, this.p1);
+			}
+			
+			GetCircumcenter(){
+				var c = []
+				
+				// Method: get 2 lines from points and find intersection of perpendicular bisectors;
+				var p1 = this.p1.ar;
+				var p2 = this.p2.ar;
+				var p3 = this.p3.ar;
+				
+				// a1 = y2 - y1; b1 = x1 - x2;
+				var a1 = p2[1] - p1[1];
+				var b1 = p1[0] - p2[0];
+				var line1 = a1*(p1[0]) + b1*(p1[1]);
+				
+				var a2 = p3[1] - p2[1];
+				var b2 = p2[0] - p3[0];
+				var line2 = a2*(p2[0]) + b2*(p2[1]);
+				
+				var mid1 = [(p1[0] + p2[0])/2, (p1[1] + p2[1])/2];
+				var mid2 = [(p2[0] + p3[0])/2, (p2[1] + p3[1])/2];
+				
+				var pb1 = -b1*mid1[0] + a1*mid1[1];
+				var pb2 = -b2*mid2[0] + a2*mid2[1];
+				
+				var det = -b1*a2 - -b2*a1;
+				c = [(a2*pb1 - a1*pb2)/det, (-b1*pb2 + b2*pb1)/det];
+				return c;
+			}
+			
+			GetCentroid(){
+				return [(this.p1.x + this.p2.x + this.p3.x)/3.0, (this.p1.y + this.p2.y + this.p3.y)/3.0,]
+			}
+			
+			WithinCircumcenter(point){
+				return Distance(this.c, point) < this.cr;
+			}
+			
+			HasPoint(p){
+				return (p[0] == this.p1.ar[0] && p[1] == this.p1.ar[1]) || (p[0] == this.p2.ar[0] && p[1] == this.p2.ar[1]) || (p[0] == this.p3.ar[0] && p[1] == this.p3.ar[1]);
+			}
+			
+			Render(){
+					this.c = this.GetCircumcenter();
+					this.centroid = this.GetCentroid();
+					this.cr = Distance(this.c, this.p1.ar);
+				if(ui.T){
+					ctx.beginPath();
+					ctx.strokeStyle = "lightpink";
+					ctx.fillStyle = this.color;
+					ctx.moveTo(this.p1.x, this.p1.y);
+					ctx.lineTo(this.p2.x, this.p2.y);
+					ctx.lineTo(this.p3.x, this.p3.y);
+					ctx.closePath();
+					ctx.lineWidth = 1;
+					ctx.stroke();
+					ctx.fill();
+				}
+				
+				if(ui.CC){
+					var c = this.c;
+					var p = new Point(c[0], c[1], "", "lightblue", 10);
+					p.Render();
+					
+					var cr = this.cr;
+					
+					ctx.strokeStyle = "lightblue"
+					ctx.beginPath();
+					ctx.arc(c[0], c[1], cr, 0, 2 * Math.PI);
+					ctx.stroke();
+				}
+				
+				if(!ui.CC && ui.T){
+					var c = this.c;
+					var p = new Point(this.centroid[0], this.centroid[1], "", "lightpink", 10);
+					p.Render();
+				}
+			}
+		}
+		
+		class UI{
+			
+			constructor(){
+				this.size = canvas.width/50;
+				this.padding = 10;
+				
+				this.CC = false; // CircumCircles On/Off
+				this.V = false; // Voronoi On/Off
+				this.T = true; // Triangles On/Off
+			}
+			
+			Update(){
+				if(!mouseDown){
+					click = false;
+				}
+			}
+			
+			Hovering(x){
+				var size = this.size;
+				var padding = this.padding;
+				var bounds = (size + padding)*2.0;
+				return mouseX < bounds + x &&
+						mouseX > x &&
+						mouseY < bounds;
+			}
+			
+			DrawCC(size, padding){
+				if(this.CC){
+					ctx.strokeStyle = "lightblue";
+				} else {
+					ctx.strokeStyle = "rgb(173, 216, 230, 0.25)";
+				}
+				
+				if(this.Hovering(0)){
+					ctx.fillStyle = "rgb(173, 216, 230, 0.5)"
+					if(!click && mouseDown){
+						this.CC = !this.CC;
+						click = true;
+					}
+				} else {
+					ctx.fillStyle = "rgb(0,0,0,0)"
+				}
+				ctx.beginPath();
+				ctx.arc(size + this.padding, size + this.padding, size, 0, 2 * Math.PI);
+				ctx.fill();
+				ctx.stroke();
+			}
+			
+			DrawTri(size, padding){
+				var x = this.size + this.size/0.20;
+				
+				if(this.T){
+					ctx.strokeStyle = "lightpink";
+				} else {
+					ctx.strokeStyle = "rgb(255, 200, 200, 0.25)";
+				}
+				
+				if(this.Hovering(x)){
+					ctx.fillStyle = "rgb(255, 200, 200, 0.5)"
+					if(!click && mouseDown){
+						this.T = !this.T;
+						click = true;
+					}
+				} else {
+					ctx.fillStyle = "rgb(0,0,0,0)"
+				}
+				ctx.beginPath();
+				var pos = size + padding + x;
+				ctx.moveTo(pos - 1.0*size, 2.0*size + padding);
+				ctx.lineTo(pos + 1.0*size, 2.0*size + padding);
+				ctx.lineTo(pos + 0.0*size, 0.2*size + padding);
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
+			}
+			
+			DrawVoronoi(size, padding){
+				var x = this.size + this.size/0.75;
+				
+				if(this.V){
+					ctx.strokeStyle = "rgb(204, 153, 255)";
+				} else {
+					ctx.strokeStyle = "rgb(204, 153, 255, 0.25)";
+				}
+				
+				if(this.Hovering(x)){
+					ctx.fillStyle = "rgb(204, 153, 255, 0.5)"
+					if(!click && mouseDown){
+						this.V = !this.V;
+						click = true;
+					}
+				} else {
+					ctx.fillStyle = "rgb(0,0,0,0)"
+				}
+				ctx.beginPath();
+				var pos = size + padding + x;
+				ctx.moveTo(pos - 0.4*size, 2.0*size + padding);
+				ctx.lineTo(pos + 1.7*size, 1.7*size + padding);
+				ctx.lineTo(pos + 1.0*size, 0.5*size + padding);
+				ctx.lineTo(pos + 0.23*size, 0.2*size + padding);
+				ctx.lineTo(pos - 0.23*size, 0.5*size + padding);
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
+			}
+			
+			Render(){
+				var size = this.size;
+				var padding = this.padding;
+				
+				this.DrawCC(size, padding);
+				this.DrawVoronoi(size, padding);
+				this.DrawTri(size, padding);
+			}
+			
+		}
+		
+		</SCRIPT>
+		
+		<CANVAS id="myCanvas" width="1000" height="1000">
+			Your browser does not support canvas.
+		</CANVAS>
+		<p1>
+		Please note!: The above points are intended to be limited to each grid cell.
+        The Dalaunay Triangulation will not be valid if a point leaves its starting grid cell.
+        This implementation is also susceptible to errors in the literal edge case where the quads 
+        are not fully convex.
+		</p1>
+		<SCRIPT>
+			//Important global canvas variables!
+			var canvas = document.getElementById("myCanvas");
+			var ctx = canvas.getContext("2d");
+			
+			//Clear Screen once (not seen)
+			ctx.fillStyle = "blue";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			
+			// Instance our 'main' class. This acts as our core game environment.
+			var m = new main();
+			var ui = new UI();
+			
+			var time = 0.0;
+			
+			// Start the game loop.
+			requestAnimationFrame(main.MainLoop);
+			
+			let mouseX = 0;
+			let mouseY = 0;
+			var mouseDown;
+			var click;
+			var grabbed = [];
+			
+			canvas.addEventListener('mousedown', e => {
+			  mouseX = e.clientX;
+			  mouseY = e.clientY;
+			  mouseDown = true;
+			});
+
+			canvas.addEventListener('mousemove', e => {
+				mouseX = e.clientX;
+				mouseY = e.clientY;
+			});
+
+			window.addEventListener('mouseup', e => {
+				mouseX = e.clientX;
+				mouseY = e.clientY;
+				mouseDown = false;
+			});
+			
+		</SCRIPT>
+		
+	</BODY>
+	
+</HTML>
+		

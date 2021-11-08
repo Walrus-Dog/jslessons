@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box;}
+        #box {
+            margin: 20px;
+            width: 300px;
+            height: 300px;
+            border-width: 2px;
+            border-style: solid;
+        }
+
+        #diceGame {
+            margin: 60px auto;
+            padding: 26px; 
+            width: 80%;
+            border: 2px solid blue;
+        }
+
+        .dice {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+    <h1 id="clicker">Click Me!</h1>
+    <div id="display"></div>
+    <form action="" id="form">
+        <input id="inputName" type="text" placeholder="Enter Name" value="">
+        <input type="submit" value="Submit">
+    </form>
+    <div id="display2"></div>
+    <div id="box"></div>
+    <div id="heroGenerator">
+        <button id="assembleBtn">Assemble!</button>
+        <h2 id="heroDisplay"></h2>
+    </div>
+    <div id="diceGame">
+        <button id="start">Let Em Ride!</button>
+        <div class="dice" id="die1"></div>
+        <div class="dice" id="die2"></div>
+        <p id="totalDisplay"></p>
+        <p id="gameStatus"></p>
+        <button id="roll">Roll Dice</button>
+        <p>Rolls: <span id="rollDisplay"></span></p>
+        <p>Point: <span id="pointDisplay"></span></p>
+    </div>
+    <script src="js/eventsnew.js"></script>
+</body>
+</html>
