@@ -1,0 +1,36 @@
+*{box-sizing: border-box;}
+
+.header {
+    height: 200px;
+    text-align: center;
+    background-color: #272727;
+    color: #e1e1e1;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.header h1 {
+    margin: 0;
+    padding-top: 40px;
+}
+
+.main {
+    text-align: center;
+}
+
+form {
+    width: 200px;
+    height: 400px;
+    margin: 0 auto;
+    border: solid orangered 2px;
+    padding-top: 40px;
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-top: 10px;
+}
