@@ -10,21 +10,13 @@
 
 let form = document.getElementById("form");
 let total = document.getElementById("total");
-let tipTotal = document.getElementById("tipTotal");
-let tipPercentSelect = [
-    
-]
-
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
 
     let orderItem = form.elements["orderItem"].value;
     let totalAmmount = form.elements["totalAmmount"].value;
-    //let tipPercentSelect = form.elements["tipPercentSelect"].value;
+    let tipPercentSelect = form.elements["tipPercentSelect"].value;
 
-    
-
-    tipTotal.innerText += ``
-    total.innerText = `Your order of ${orderItem} comes out to a total of ${totalAmmount * tipPercentSelect}`
+    total.innerText = `Your order of ${orderItem} comes out to a total of ${totalAmmount * parseFloat(tipPercentSelect)} with your tip`
 });
