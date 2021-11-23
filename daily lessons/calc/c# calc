@@ -1,0 +1,42 @@
+
+class CoolClass
+{
+    static void Main(string[] args)
+    {
+        string op = "-1";
+        long result = 0;
+        
+        while(op == "-1"){
+            Console.Write("Calculator Program \n-Input the first number: ");
+            int num1 = Int32.Parse(Console.ReadLine());
+            Console.WriteLine("Choose an operator ( + - * / % )");
+            op = Console.ReadLine().Substring(0,1);
+            Console.Write("Input Second Number: ");
+            int num2 = Int32.Parse(Console.ReadLine());
+            
+            switch(op){
+                case "*":
+                    result = num1 * num2;
+                    break;
+                case "/":
+                    result = (long)num1 / (long)num2;
+                    break;
+                case "+":
+                    result = num1 + num2;
+                    break;
+                case "-":
+                    result = num1 - num2;
+                    break;
+                case "%":
+                    result = num1 % num2;
+                    break;
+                default:
+                    Console.WriteLine("\nIncorrect Operator! Try Again!\n");
+                    op = "-1";
+                    break;
+            }
+        }
+        
+        Console.WriteLine("Final result is: " + result);
+    }
+}

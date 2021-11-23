@@ -20,12 +20,10 @@
             <div class="row">
                 <div class="col">
                     <h3 class="ageheader text-center">Please enter your date of birth:</h3>
-                    <form action="#text" class="d-flex justify-content-center">
-                        <input type="date" name="dateInput" class="dateInput" id="dateInput" required>
-                        <input type="radio" name="checkBox" value="checkBox" required>
+                        <input type="date" name="dateInput" class="dateInput" id="dateInput">
+                        <input type="checkbox" name="checkBox" value="checkBox" id="checkBox">
                         <label for="checkBox">Please check the box</label>
-                        <button class="subBtn" id="subBtn">Submit</button>
-                    </form>
+                        <button class="subBtn" id="subBtn" onclick="ageCheck()">Submit</button>
                 </div>
             </div>
         </section>

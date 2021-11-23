@@ -9,7 +9,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: #b6b6b6;
+    background: #a9a9a9;
 }
 
 header {
@@ -37,13 +37,16 @@ button {
 }
 
 .accessTextCheck {
+    text-align: center;
     color: blue;
 }
 
 .accessTextPass {
+    text-align: center;
     color: green;
 }
 
 .accessTextFail {
+    text-align: center;
     color: red;
 }

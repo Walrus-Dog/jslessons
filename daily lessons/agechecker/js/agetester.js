@@ -1,25 +1,49 @@
-/*
-    build an age tester to allow anyone over 21 access, but anyone under no access. in addition have a check box that must be checked to gai access
+// make age checker that works good
+// the event listener is in the html
 
-    have date entry
-    have confirmation check box
-    have submit button
-    if box not checked then display check the box
-    have display of access denied if under 21
-    have dislay of access granted if over 21
+//start checking for the age as soon as we hit submit
+function ageCheck() {
+    //grab the elements we need
+    const date = document.getElementById("dateInput");
+    const checkBox = document.getElementById("checkBox");
+    const accessTextCheck = document.getElementById("accessTextCheck");
+    const accessTextPass = document.getElementById("accessTextPass");
+    const accessTextFail = document.getElementById("accessTextFail");
 
-    use a if loop to check year and Date.prototype.getYear() to access current year, if year selected eosnt = to 21 then display accessTestFail
+    //set messages for arguments
+    const accessTextCheckLine = "Please hit the checkbox";
+    const accessTextPassLine = "Access granted";
+    const accessTextFailLine = "Access denied";
 
-    Get Today's Date using new Date()
-    Get Date of Birth using new Date(datestring)
-    Get Year from both Dates using getFullYear()
-    Now find the Difference between two Years.
-*/ 
+    //clear the messages that get sent so it doesn't keep the old ones. since its read top to bottom it will automatically reset them and readdd them once input is added
+    accessTextCheck.innerHTML = "";
+    accessTextPass.innerHTML = "";
+    accessTextFail.innerHTML = "";
 
-let date = document.getElementById("dateInput");
-let checkBox = document.getElementById("checkBox");
+    //event for clicking submit. box must be checked for this to run at all
+    if (checkBox.checked) {
+        //check and see if date input has anything in it, if not it displays fail message
+        if (date.value != undefined && date.value != null && date.value != "") {
+            //set dates we need to grab
+            let userDate = new Date(date.value);
+            let todayDate = new Date();
+            
+            //take current date and subtract 21 from year
+            todayDate.setFullYear(todayDate.getFullYear() - 21);
 
-let accessTextCheck = "Please hit the check box";
-let accessTextPass = "Access Granted";
-let accessTextFail = "Access Denied";
-
+            //check to see if date user entered is older than date on computer
+            if (todayDate >= userDate) {
+                accessTextPass.innerHTML = accessTextPassLine;
+            } else {
+                //if date is under 21 it will know and auto display fail
+                accessTextFail.innerHTML = accessTextFailLine;
+            }
+        } else {
+            //if there is no input on the date then it will display the fail message
+            accessTextFail.innerHTML = accessTextFailLine;
+        }
+    } else {
+        //if the box isn't checked it will display check box message
+        accessTextCheck.innerHTML = accessTextCheckLine
+    }
+}
